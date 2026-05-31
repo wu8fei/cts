@@ -696,9 +696,27 @@
 
         // AI列车系统
         const aiTrains = [];
-        let aiSpawnTimer = 0;
-        const AI_SPAWN_INTERVAL = 35;
-
+        function spawnAITrain() {
+    const trackZ = TRACK_Z_DOWN;
+    const spawnX = trainPositionX + 1500; // 在玩家前方1500米
+    const speed = 250; // 初始速度250km/h
+    const model = createAITrainModel();
+    model.position.set(spawnX, 0, trackZ);
+    model.rotation.y = 0; // ★ 面向+X，与玩家同向
+    scene.add(model);
+    aiTrains.push({ 
+        group: model, 
+        speed, 
+        direction: 1,  // ★ 改为1，向+X行驶
+        trackZ,
+        // ★ 新增AI列车停靠状态
+        nextStationIndex: 1,  // AI列车从第二个车站开始（第一个车站玩家刚经过）
+        stopPhase: 'none',
+        stopStartTime: 0,
+        hasAwarded: false,
+        targetSpeed: 250
+    });
+}
         function createAITrainModel() {
             const group = new THREE.Group();
             const bodyMat = new THREE.MeshStandardMaterial({ color: '#f5f5f5', roughness: 0.35, metalness: 0.6 });
